@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ভাড়া কত? বাস, ট্রেন, সিএনজি, অটো</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#f4f7f3;--card:#fff;--ink:#1d2421;--mute:#5d6a64;--green:#0e4d3a;--red:#d8372b;--yellow:#ffc83d;--line:#d5ddd8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101613;--card:#18211d;--ink:#eef3f0;--mute:#9fb0a7;--green:#5fd1a4;--line:#2c3a34}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hind Siliguri",system-ui,sans-serif;line-height:1.5}
+.wrap{max-width:560px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:30px;line-height:1.2;margin:8px 0 4px;color:var(--green)}
+.sub{color:var(--mute);margin:0 0 18px}
+.pick{background:var(--card);border:2px solid var(--green);border-radius:14px;padding:14px;display:grid;gap:10px}
+label{font-size:14px;color:var(--mute);display:block;margin-bottom:2px}
+select,input{width:100%;font:inherit;font-size:18px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+select:focus,input:focus,button:focus-visible,summary:focus-visible{outline:3px solid var(--yellow);outline-offset:1px}
+.swap{justify-self:center;background:var(--yellow);color:#1d2421;border:0;border-radius:999px;padding:6px 18px;font:inherit;font-weight:700;cursor:pointer}
+.dist{margin:18px 0 8px;font-size:18px}
+.dist b{color:var(--red);font-size:26px}
+.tk{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-left:8px solid var(--green);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.tk:nth-child(3n+2){border-left-color:var(--red)}
+.tk:nth-child(3n){border-left-color:var(--yellow)}
+.tk h3{margin:0;font-size:18px}
+.tk p{margin:0;font-size:13px;color:var(--mute)}
+.amt{font-size:22px;font-weight:700;white-space:nowrap;text-align:right}
+.amt small{display:block;font-size:12px;font-weight:400;color:var(--mute)}
+.note{font-size:13px;color:var(--mute);margin-top:14px}
+details{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+summary{cursor:pointer;font-weight:700}
+.rates{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.empty{padding:20px 0;color:var(--mute)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>ভাড়া কত?</h1>
+<p class="sub">এক জেলা থেকে আরেক জেলায় যেতে বাস, ট্রেন, সিএনজি ও অটোরিকশায় আনুমানিক কত লাগবে।</p>
+<div class="pick">
+<div><label for="a">কোথা থেকে</label><select id="a"></select></div>
+<button class="swap" id="sw" type="button">⇅ উল্টে দাও</button>
+<div><label for="b">কোথায়</label><select id="b"></select></div>
+</div>
+<div id="out"></div>
+<details>
+<summary>প্রতি কিমি ভাড়া বদলাও</summary>
+<div class="rates" id="rates"></div>
+</details>
+<p class="note">এটা সড়কপথের আনুমানিক হিসাব, আসল ভাড়া নয়। সিএনজি ও অটোরিকশায় দরদাম হয়, বাসের ভাড়া রুট ও সময়ভেদে আলাদা হতে পারে। ট্রেন সব জেলায় যায় না, টিকিট কাটার আগে রেলের সময়সূচি দেখে নাও।</p>
+</div>
+<script>
+var D="ঢাকা,23.81,90.41;গাজীপুর,23.99,90.42;নারায়ণগঞ্জ,23.62,90.50;নরসিংদী,23.92,90.72;মানিকগঞ্জ,23.86,90.00;মুন্সিগঞ্জ,23.55,90.53;টাঙ্গাইল,24.25,89.92;কিশোরগঞ্জ,24.43,90.78;ফরিদপুর,23.60,89.84;গোপালগঞ্জ,23.01,89.83;মাদারীপুর,23.17,90.20;রাজবাড়ী,23.76,89.64;শরীয়তপুর,23.24,90.43;চট্টগ্রাম,22.36,91.78;কক্সবাজার,21.45,91.98;কুমিল্লা,23.46,91.18;ফেনী,23.02,91.40;ব্রাহ্মণবাড়িয়া,23.96,91.11;নোয়াখালী,22.82,91.10;চাঁদপুর,23.23,90.66;লক্ষ্মীপুর,22.94,90.84;রাঙামাটি,22.65,92.17;খাগড়াছড়ি,23.12,91.98;বান্দরবান,22.20,92.22;রাজশাহী,24.37,88.60;বগুড়া,24.85,89.37;পাবনা,24.00,89.23;সিরাজগঞ্জ,24.45,89.70;নাটোর,24.42,89.00;নওগাঁ,24.80,88.93;চাঁপাইনবাবগঞ্জ,24.60,88.28;জয়পুরহাট,25.10,89.02;খুলনা,22.82,89.55;যশোর,23.17,89.21;সাতক্ষীরা,22.72,89.07;বাগেরহাট,22.65,89.79;নড়াইল,23.17,89.50;মাগুরা,23.49,89.42;ঝিনাইদহ,23.54,89.17;কুষ্টিয়া,23.90,89.12;চুয়াডাঙ্গা,23.64,88.85;মেহেরপুর,23.76,88.63;বরিশাল,22.70,90.37;ভোলা,22.69,90.65;পটুয়াখালী,22.36,90.33;পিরোজপুর,22.58,89.97;ঝালকাঠি,22.64,90.20;বরগুনা,22.15,90.13;সিলেট,24.90,91.87;মৌলভীবাজার,24.48,91.77;হবিগঞ্জ,24.38,91.41;সুনামগঞ্জ,25.07,91.40;রংপুর,25.75,89.25;দিনাজপুর,25.63,88.64;ঠাকুরগাঁও,26.03,88.46;পঞ্চগড়,26.34,88.55;নীলফামারী,25.93,88.86;লালমনিরহাট,25.99,89.45;কুড়িগ্রাম,25.81,89.65;গাইবান্ধা,25.33,89.53;ময়মনসিংহ,24.75,90.40;জামালপুর,24.92,89.94;নেত্রকোনা,24.87,90.73;শেরপুর,25.02,90.02".split(";").map(function(s){var p=s.split(",");return{n:p[0],la:+p[1],lo:+p[2]}});
+var R=[
+{k:"bus",t:"বাস",d:"সাধারণ সার্ভিস",r:2.45},
+{k:"tr1",t:"ট্রেন, শোভন",d:"যেখানে রেললাইন আছে",r:1.0},
+{k:"tr2",t:"ট্রেন, স্নিগ্ধ",d:"যেখানে রেললাইন আছে",r:1.9},
+{k:"cng",t:"সিএনজি",d:"রিজার্ভ, দরদাম লাগে",r:12},
+{k:"auto",t:"অটোরিকশা",d:"কাছের পথের জন্য",r:6}
+];
+var bn=function(n){return String(n).replace(/\d/g,function(d){return"০১২৩৪৫৬৭৮৯"[d]})};
+var A=document.getElementById("a"),B=document.getElementById("b"),O=document.getElementById("out"),RT=document.getElementById("rates");
+D.forEach(function(x,i){A.add(new Option(x.n,i));B.add(new Option(x.n,i))});
+A.value=0;B.value=D.findIndex(function(x){return x.n==="চট্টগ্রাম"});
+RT.innerHTML=R.map(function(x){return'<div><label for="r_'+x.k+'">'+x.t+'</label><input id="r_'+x.k+'" type="number" inputmode="decimal" step="0.1" min="0" value="'+x.r+'"></div>'}).join("");
+function km(p,q){var f=Math.PI/180,dl=(q.la-p.la)*f,dn=(q.lo-p.lo)*f;var h=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(p.la*f)*Math.cos(q.la*f)*Math.sin(dn/2)*Math.sin(dn/2);return 2*6371*Math.asin(Math.sqrt(h))*1.3}
+function draw(){
+ var p=D[A.value],q=D[B.value];
+ if(A.value===B.value){O.innerHTML='<p class="empty">দুটো আলাদা জেলা বেছে নাও।</p>';return}
+ var d=Math.round(km(p,q)),h='<p class="dist">'+bn(p.n.length&&"")+p.n+' থেকে '+q.n+', প্রায় <b>'+bn(d)+'</b> কিমি</p>';
+ R.forEach(function(x){
+  var r=parseFloat(document.getElementById("r_"+x.k).value)||0,m=d*r,lo=Math.round(m*0.9/10)*10,hi=Math.round(m*1.1/10)*10,d2=x.d;
+  if(x.k==="auto"&&d>30)d2="এত দূরে সাধারণত চলে না";
+  h+='<div class="tk"><div><h3>'+x.t+'</h3><p>'+d2+'</p></div><div class="amt">৳'+bn(lo)+' – '+bn(hi)+'<small>আনুমানিক</small></div></div>';
+ });
+ O.innerHTML=h;
+}
+A.onchange=B.onchange=draw;
+RT.oninput=draw;
+document.getElementById("sw").onclick=function(){var t=A.value;A.value=B.value;B.value=t;draw()};
+draw();
+</script>
+</body>
+</html>
